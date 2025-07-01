@@ -49,7 +49,7 @@ class Expenses(SQLModel, table=True):
     amount: float = Field(nullable=False)
     category : ExpenseCategory = Field(nullable=False)
     description: Optional[str]
-    created_at = datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
-    updated_at = datetime = Field(sa_column=Column(pg.TIMESTAMP,default=datetime.now))
+    created_at : datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+    updated_at : datetime = Field(sa_column=Column(pg.TIMESTAMP,default=datetime.now))
     
     user_uid: Optional[uuid.UUID] = Field(default=None, foreign_key="users.uid")

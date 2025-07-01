@@ -25,4 +25,4 @@ def get_config(env_state: str):
     configs = {"dev":DevConfig, "prod":ProdConfig, "test": TestConfig}
     return configs[env_state]()
 
-config = get_config(BaseConfig().ENV_STATE or "dev")
+settings = get_config(BaseConfig().ENV_STATE or "dev")
