@@ -1,3 +1,4 @@
+from src.utils.config import settings
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -5,10 +6,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-from src.utils.config import config
-
 engine = create_async_engine(
-    url=config.DATABASE_URL,
+    url=settings.DATABASE_URL,
     echo=False,
     future=True,
     connect_args= {"statement_cache_size":0}
