@@ -46,6 +46,7 @@ class Expenses(SQLModel, table=True):
     __tablename__ = "expenses"
     
     uid : uuid.UUID = Field(default_factory=uuid.uuid4,sa_column=Column(pg.UUID, primary_key=True, nullable=False, index=True))
+    title: str
     amount: float = Field(nullable=False)
     category : ExpenseCategory = Field(nullable=False)
     description: Optional[str]
