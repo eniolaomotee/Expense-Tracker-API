@@ -12,3 +12,10 @@ class ExpenseCreate(BaseModel):
     created_at : datetime 
     updated_at : datetime 
     
+class ExpenseOutput(BaseModel):
+    title: str
+    amount: float
+    category:ExpenseCategory
+    description: Optional[str]
+    created_at : datetime
+    updated_at : datetime

@@ -2,6 +2,8 @@ import logging
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.database.main import init_db, close_db
+from src.v1.routes.expenses import expense_router
+from src.v1.routes.user import user_router
 from src.utils.logging_conf import configure_logging
 logger = logging.getLogger(__name__)
 
@@ -27,3 +29,5 @@ app = FastAPI(
 )
 
 # Include Routers here below
+app.include_router(user_router, prefix=f"/api/{version}/auth", tags=["User Auth"])
+app.include_router(expense_router, prefix=f"/api/{version}/expense", tags=["Expense Tracker"])
