@@ -1,12 +1,14 @@
 from fastapi import HTTPException,status
-from sqlmodel import desc, select
+from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy import func, extract
 from src.v1.models.models import Expenses, ExpenseCategory
 from src.v1.schemas.expenses import ExpenseCreate
 import logging
 import uuid
+from typing import Optional
 from datetime import date
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 
@@ -110,3 +112,24 @@ class ExpensesService:
             "month": date.strftime("%B %Y"),
             "summary":summary
         }
+
+    async def filter_user_expenses(self, user_uid:uuid.UUID,filter_by:Optional[str], start_date: Optional[str],end_date:Optional[str],session:AsyncSession):
+        statement = select(Expenses).where(Expenses.user_uid == user_uid)
+        
+        now = datetime.utcnow()
+        
+        if filter_by == "past_week":
+            statement = statement.where(Expenses.created_at >= now - timedelta(days=7))
+        elif filter_by == "past_month":
+            statement = statement.where(Expenses.created_at >= now - timedelta(days=30))
+        elif filter_by == "last_3_months":
+            statement == statement.where(Expenses.created_at >= now - timedelta(days=90))
+        elif filter_by == "custom":
+            if start_date and end_date:
+                statement = statement.where(Expenses.created_at >= start_date , Expenses.created_at <= end_date)
+            else:
+                raise ValueError("Custom filter requires both start date and end date")
+        
+        statement = statement.order_by(Expenses.created_at.desc())
+        result = await session.exec(statement)
+        return result.all()

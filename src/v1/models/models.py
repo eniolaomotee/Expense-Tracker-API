@@ -23,7 +23,7 @@ class User(SQLModel, table=True):
     )
     
     email: str
-    hashed_password: str
+    password: str
     is_active: bool = False
     created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     

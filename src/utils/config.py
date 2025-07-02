@@ -9,6 +9,11 @@ class BaseConfig(BaseSettings):
     
 class GlobalConfig(BaseSettings):
     DATABASE_URL:Optional[str] = None
+    SECRET_KEY : Optional[str]
+    ALGORITHM: Optional[str]
+    ACCESS_TOKEN_EXPIRE_MINUTES : int
+    REFRESH_TOKEN_EXPIRE_MINUTES: int
+
 
 class DevConfig(GlobalConfig):
     model_config = SettingsConfigDict(env_prefix="DEV_",env_file=".env", extra="ignore")
