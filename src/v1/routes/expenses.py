@@ -20,7 +20,7 @@ access_bearer_token= AccessTokenBearer()
 
 @expense_router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_expense(expense_items:ExpenseCreate, session:AsyncSession = Depends(get_session), token_details=Depends(access_bearer_token)):
-    user_uid = token_details.get("user_data")["user_uid"]
+    user_uid = uuid.UUID(token_details.get("user_data")["user_uid"])
     logger.debug("This is the users uid %s", user_uid)
     new_expense = await expense_service.create_expense(expense_items=expense_items, user_uid=user_uid, session=session)
     return new_expense
@@ -89,7 +89,7 @@ async def delete_expense(expense_uid:uuid.UUID,session:AsyncSession=Depends(get_
 
 @expense_router.get("/", response_model=PaginatedExpenses)
 async def get_all_user_expenses(token_details=Depends(access_bearer_token), page: int = 1,limit: int = 10, session:AsyncSession=Depends(get_session)):
-    user_uid = token_details.get("user_data")["user_uid"]
+    user_uid = uuid.UUID(token_details.get("user_data")["user_uid"])
     all_expenses = await expense_service.get_user_all_expenses(user_uid=user_uid, page=page,limit=limit,session=session)
     return all_expenses    
 

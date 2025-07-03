@@ -1,5 +1,4 @@
 from typing import AsyncGenerator
-import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
 from src.database.main import get_session
@@ -9,7 +8,6 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from src.utils.config import settings
 from sqlmodel import SQLModel,select
 from src.v1.models.models import User
-import uuid
 # Used SQLite for tests
 TEST_DATABASE_URL = settings.DATABASE_URL_TEST
 
@@ -66,7 +64,6 @@ async def confirmed_user(async_client:AsyncClient):
         result = await session.exec(statement)
         user = result.first()
         assert user , "User found in the Db"
-        print(f"chakammmmmmmm, {type(user.uid)}")
         user_data["uid"] = user.uid
         
     return user_data
