@@ -13,6 +13,8 @@ class GlobalConfig(BaseSettings):
     ALGORITHM: Optional[str]
     ACCESS_TOKEN_EXPIRE_MINUTES : int
     REFRESH_TOKEN_EXPIRE_MINUTES: int
+    DATABASE_URL_TEST: Optional[str] = None
+
 
 
 class DevConfig(GlobalConfig):
@@ -22,8 +24,7 @@ class ProdConfig(GlobalConfig):
     model_config = SettingsConfigDict(env_prefix="PROD_",env_file=".env", extra="ignore")
     
 class TestConfig(GlobalConfig):
-    model_config = SettingsConfigDict(env_prefix="TEST_", env_file=".env",extra="ignore")
-    
+    model_config = SettingsConfigDict(env_prefix="TEST_", env_file=".env",extra="ignore")    
 
 @lru_cache
 def get_config(env_state: str):
