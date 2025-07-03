@@ -39,6 +39,7 @@ class ExpenseCategory(str, Enum):
     UTILITIES = "utilites"
     CLOTHING = "clothing"
     HEALTH = "health"
+    FOOD = "food"
     OTHERS = "others"
  
 

@@ -3,6 +3,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 import logging
+from typing import AsyncGenerator
 
 logger = logging.getLogger(__name__)
 
@@ -15,13 +16,12 @@ engine = create_async_engine(
 
 AsyncSessionFactory = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False, autoflush=False)
 
-async def get_session() -> AsyncSession:
+async def get_session() -> AsyncGenerator[AsyncSession, None]:
     "Dependency for getting a DB session"
     async with AsyncSessionFactory() as session:
         try:
             yield session
             logger.debug("session %s", session)
-            yield session.commit()
         except Exception as e:
             await session.rollback()
             raise e

@@ -25,6 +25,7 @@ class AuthService:
         return True if user_exist else False
     
     async def create_user(self, user_details:UserCreate, session:AsyncSession):
+        
         user_email = user_details.email
         
         user_exists = await self.user_exist(email=user_email, session=session)
@@ -34,10 +35,10 @@ class AuthService:
         
         hashed_password = hash_password(user_details.password)
         
-        new_user = User(email=user_email, password=hashed_password, is_active=user_details.is_active)
+        new_user = User(email=user_email, password=hashed_password)
         
         session.add(new_user)
-        await session.commit(new_user)
+        await session.commit()
         await session.refresh(new_user)
         return new_user
         

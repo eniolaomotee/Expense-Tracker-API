@@ -3,9 +3,10 @@ from sqlmodel import select, desc
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy import func, extract
 from src.v1.models.models import Expenses, ExpenseCategory
-from src.v1.schemas.expenses import ExpenseCreate
+from src.v1.schemas.expenses import ExpenseCreate, ExpenseUpdate
 import logging
 import uuid
+from sqlalchemy import cast, String
 from typing import Optional
 from datetime import date
 from datetime import datetime, timedelta
@@ -29,7 +30,7 @@ class ExpensesService:
         await session.refresh(new_expense)
         return new_expense
     
-    async def update_expense(self,expense_uid:uuid.UUID, expense_items:ExpenseCreate, session:AsyncSession):
+    async def update_expense(self,expense_uid:uuid.UUID, expense_items:ExpenseUpdate, session:AsyncSession):
         "Get the expense to be updates"
         expense_to_update = await self.get_expense_by_uid(expense_uid=expense_uid, session=session)
         
@@ -44,7 +45,7 @@ class ExpensesService:
         await session.commit()
         await session.refresh(expense_to_update)
         
-        return ExpenseCreate.model_validate(expense_to_update)
+        return expense_to_update
                 
                 
     async def delete_expense(self, expense_uid:uuid.UUID, session:AsyncSession):
@@ -80,8 +81,7 @@ class ExpensesService:
         statement = select(Expenses).where(
             (Expenses.title.ilike(f"%{search_term}%")) |
             (Expenses.description.ilike(f"%{search_term}%")) |
-            (func.similarity(Expenses.title, search_term) > 0.3)
-            (Expenses.category.ilike(f"%{search_term}%"))
+            (cast(Expenses.category, String).ilike(f"%{search_term}%"))
         ).order_by(Expenses.created_at.desc())
         
         result = await session.exec(statement=statement)
@@ -98,19 +98,21 @@ class ExpensesService:
 
     async def get_expense_summary_monthly(self, date:date, user_uid:uuid.UUID, session:AsyncSession):
         statement = select(Expenses.category, func.sum(Expenses.amount).label("total")).where(
-            extract("year", Expenses.created_at == date.year),
-            extract("month", Expenses.created_at == date.month,
+            extract("year", Expenses.created_at)  == date.year,
+            extract("month", Expenses.created_at) == date.month,
             Expenses.user_uid == user_uid
-            )
-            .group_by(Expenses.category)
-            )
+            ).group_by(Expenses.category)
+            
         
         result = await session.exec(statement)
         summary = result.all()
         
+        # Transform to seriazable
+        summary_data = [{"category": category, "total":float(total)} for category, total in summary]
+        
         return {
             "month": date.strftime("%B %Y"),
-            "summary":summary
+            "summary":summary_data
         }
 
     async def filter_user_expenses(self, user_uid:uuid.UUID,filter_by:Optional[str], start_date: Optional[str],end_date:Optional[str],session:AsyncSession):

@@ -22,7 +22,7 @@ class TokenBearer(HTTPBearer,ABC):
         credentials = await super().__call__(request)
         
         token = credentials.credentials
-        logger.debug("token from bearer auth %s", token)
+        # logger.debug("token from bearer auth %s", token)
         token_data = decode_access_token(token=token)
         logger.debug("token data from token %s", token_data)
         

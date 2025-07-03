@@ -51,7 +51,7 @@ async def login_user(user_login:UserCreate, session:AsyncSession=Depends(get_ses
                "access_token": access_token,
                "refresh_token": refresh_token
            },
-            "user": {"email":user.email, "user_uid":user.uid}
+            "user": {"email":user.email, "user_uid":str(user.uid)}
        },
        status_code=status.HTTP_200_OK
    )
