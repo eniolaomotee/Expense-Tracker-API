@@ -23,11 +23,10 @@ version_prefix = f"/api/{version}"
 
 app = FastAPI(
     title="Expense Tracker API",
-    description="This API allows users to create, read, update, and delete expenses. Users can sign up and log in to the application. Each user  have their own set of expenses and you can also filter expenses as well as get expense monthly summary.",
+    description=" This API allows users to create, read, update, and delete expenses. Users can sign up and log in to the application. Each user  have their own set of expenses and you can also filter expenses as well as get expense monthly summary.",
     version=version,
     lifespan=lifespan
 )
 
-# Include Routers here below
 app.include_router(user_router, prefix=f"/api/{version}/auth", tags=["User Auth"])
 app.include_router(expense_router, prefix=f"/api/{version}/expense", tags=["Expense Tracker"])
