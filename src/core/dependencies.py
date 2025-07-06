@@ -56,7 +56,7 @@ class RefreshTokenBearer(TokenBearer):
                 detail="Please provide a Refresh Token, not an Access Token"
             )
             
-
+# Get Current User
 async def get_current_user(token:str=Depends(AccessTokenBearer()), session:AsyncSession = Depends(get_session)):
     user_email = token["user_data"]["email"]
     logger.debug("This is the users email %s", user_email)
