@@ -30,7 +30,7 @@ This API allows users to create, read, update, and delete expenses. Users can al
 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/expense-tracker-api.git
+git clone https://github.com/eniolaomotee/Expense-Tracker-API
 cd expense-tracker-api
 ```
 
